@@ -45,19 +45,28 @@ const TodoList = () => {
         }
         setChecked(newChecked);
     };
+
+
     function handleDelete(id) {
         dispatch(deleteTodo(id))
     };
+
     function EditableTask(e, value) {
         new Promise((resolve, reject) => {
             dispatch(editTodo({ id: value.id, status: value.status, task: e.target.outerText }))
             resolve();
         })
             .then(() => {
-                setSuccesEditHandle(true)
+                setSuccesEditHandle(true);
+                setTimeout(() => {
+                    setSuccesEditHandle(false);
+                }, 2000);
             })
             .catch(() => {
                 setErrorEditHandle(true)
+                setTimeout(() => {
+                    setErrorEditHandle(false);
+                }, 2000);
             })
 
     }
