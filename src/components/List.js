@@ -28,17 +28,11 @@ const TodoList = () => {
     }, []);
 
     const handleToggle = (value) => () => {
-        const currentIndex = checked.indexOf(value);
-
-        if (currentIndex == -1) {
-            if (value.status == false) {
-                dispatch(editTodo({ id: value.id, status: true, task: value.task }));
-            }
-
-        } else {
-            if (value.status == true) {
-                dispatch(editTodo({ id: value.id, status: false, task: value.task }));
-            }
+        if (value.status == false) {
+            dispatch(editTodo({ id: value.id, status: true, task: value.task }));
+        }
+        else if (value.status == true) {
+            dispatch(editTodo({ id: value.id, status: false, task: value.task }));
         }
     };
 
