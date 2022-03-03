@@ -2,7 +2,7 @@ import { makeStyles } from "@material-ui/core";
 
 export const useStyles = makeStyles((theme) => ({
     root: {
-        minWidth: "260px",
+        minWidth: "360px",
         borderRadius: 10,
         overflowY: "auto",
         maxHeight: 500,

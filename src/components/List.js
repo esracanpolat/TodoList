@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
-import { Checkbox } from '@material-ui/core';
+import { Checkbox, Snackbar } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 import { deleteTodo, editTodo } from '../Redux/action/action';
 import { useStyles } from '../assests/styles';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,10 +17,17 @@ const TodoList = () => {
     const dispatch = useDispatch();
     var Todos = useSelector((state) => state.todoReducer).Todo;
     const [checked, setChecked] = React.useState([0]);
+    const [succesEditHandle, setSuccesEditHandle] = useState(false);
+    const [errorEditHandle, setErrorEditHandle] = useState(false)
+
     useEffect(() => {
         debugger;
-        taskData.map((value) => dispatch(editTodo({ id: value.id, status: value.status, task: value.task })));
+        taskData.map((value) => {
+            dispatch(editTodo({ id: value.id, status: value.status, task: value.task }))
+            value.status == true ? checked.push(value) : checked.splice(value)
+        });
     }, []);
+
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
         const newChecked = [...checked];
@@ -28,7 +36,6 @@ const TodoList = () => {
             if (value.status == false) {
                 dispatch(editTodo({ id: value.id, status: true, task: value.task }));
             }
-            debugger;
             newChecked.push(value);
         } else {
             if (value.status == true) {
@@ -42,7 +49,17 @@ const TodoList = () => {
         dispatch(deleteTodo(id))
     };
     function EditableTask(e, value) {
-        dispatch(editTodo({ id: value.id, status: value.status, task: e.target.outerText }))
+        new Promise((resolve, reject) => {
+            dispatch(editTodo({ id: value.id, status: value.status, task: e.target.outerText }))
+            resolve();
+        })
+            .then(() => {
+                setSuccesEditHandle(true)
+            })
+            .catch(() => {
+                setErrorEditHandle(true)
+            })
+
     }
 
     console.log(Todos, "Todos");
@@ -100,7 +117,20 @@ const TodoList = () => {
                 );
             })}
         </List>
-
+        <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={succesEditHandle}
+            onRequestClose={() => setSuccesEditHandle(false)}
+            transitionDuration={{ enter: 1000, exit: 5000 }}
+            message="Düzenleme işlemi başarılı"
+        />
+        <Snackbar
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+            open={errorEditHandle}
+            onRequestClose={() => setErrorEditHandle(false)}
+            transitionDuration={{ enter: 1000, exit: 5000 }}
+            message="Düzenleme işlemi başarısız"
+        />
     </>);
 }
 

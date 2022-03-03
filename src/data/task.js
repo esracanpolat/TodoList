@@ -8,6 +8,6 @@ export const taskData = [
     {
         "id": 2,
         "task": "Task 2",
-        "status": false
+        "status": true
     }
 ]
