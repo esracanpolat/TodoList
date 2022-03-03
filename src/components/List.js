@@ -16,12 +16,11 @@ const TodoList = () => {
     const classes = useStyles();
     const dispatch = useDispatch();
     var Todos = useSelector((state) => state.todoReducer).Todo;
-    const [checked, setChecked] = React.useState([0]);
+    const [checked, setChecked] = useState([]);
     const [succesEditHandle, setSuccesEditHandle] = useState(false);
     const [errorEditHandle, setErrorEditHandle] = useState(false)
 
     useEffect(() => {
-        debugger;
         taskData.map((value) => {
             dispatch(editTodo({ id: value.id, status: value.status, task: value.task }))
             value.status == true ? checked.push(value) : checked.splice(value)
@@ -30,25 +29,37 @@ const TodoList = () => {
 
     const handleToggle = (value) => () => {
         const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
 
-        if (currentIndex === -1) {
+        if (currentIndex == -1) {
             if (value.status == false) {
                 dispatch(editTodo({ id: value.id, status: true, task: value.task }));
             }
-            newChecked.push(value);
+
         } else {
             if (value.status == true) {
                 dispatch(editTodo({ id: value.id, status: false, task: value.task }));
-            } newChecked.splice(currentIndex, 1);
-
+            }
         }
-        setChecked(newChecked);
     };
 
 
     function handleDelete(id) {
-        dispatch(deleteTodo(id))
+        new Promise((resolve, reject) => {
+            dispatch(deleteTodo(id))
+            resolve();
+        }).then(() => {
+            setSuccesEditHandle(true);
+            setTimeout(() => {
+                setSuccesEditHandle(false);
+            }, 2000);
+        })
+            .catch(() => {
+                setErrorEditHandle(true)
+                setTimeout(() => {
+                    setErrorEditHandle(false);
+                }, 2000);
+            })
+
     };
 
     function EditableTask(e, value) {
@@ -71,7 +82,7 @@ const TodoList = () => {
 
     }
 
-    console.log(Todos, "Todos");
+
     return (<>
 
         <List className={classes.root}
@@ -95,6 +106,7 @@ const TodoList = () => {
             }}
         >
             {Todos.map((value) => {
+                console.log(value, "value");
                 const labelId = value.id;
                 return (
                     <div style={{ width: "auto" }}>
@@ -103,7 +115,7 @@ const TodoList = () => {
                                 <ListItemIcon dense button onClick={handleToggle(value)}>
                                     <Checkbox
                                         edge="start"
-                                        checked={checked.indexOf(value) !== -1}
+                                        checked={value.status}
                                         tabIndex={-1}
                                         disableRipple
                                         inputProps={{ 'aria-labelledby': labelId }}
@@ -131,14 +143,14 @@ const TodoList = () => {
             open={succesEditHandle}
             onRequestClose={() => setSuccesEditHandle(false)}
             transitionDuration={{ enter: 1000, exit: 5000 }}
-            message="Düzenleme işlemi başarılı"
+            message="İşlemi başarılı"
         />
         <Snackbar
             anchorOrigin={{ vertical: "top", horizontal: "center" }}
             open={errorEditHandle}
             onRequestClose={() => setErrorEditHandle(false)}
             transitionDuration={{ enter: 1000, exit: 5000 }}
-            message="Düzenleme işlemi başarısız"
+            message="İşlemi başarısız"
         />
     </>);
 }

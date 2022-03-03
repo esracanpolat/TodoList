@@ -8,6 +8,9 @@ export const useStyles = makeStyles((theme) => ({
         maxHeight: 500,
         backgroundColor: theme.palette.background.paper,
         [theme.breakpoints.down('md')]: {
+            minWidth: "260px",
+        },
+        [theme.breakpoints.down('xs')]: {
             width: "260px",
         },
     },
